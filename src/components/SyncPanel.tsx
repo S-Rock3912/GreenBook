@@ -135,8 +135,8 @@ export default function SyncPanel() {
       {!session ? (
         <div className="sync-auth">
           <p className="sync-note">
-            招待されたメールアドレスでログインします。届く
-            <strong>6桁の確認コード</strong>をこのアプリに入力してください
+            招待されたメールアドレスでログインします。メールに届く
+            <strong>確認コード（数字）</strong>をこのアプリに入力してください
             （メールのリンクを開く必要はありません）。
           </p>
           <input
@@ -157,8 +157,8 @@ export default function SyncPanel() {
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                maxLength={6}
-                placeholder="メールに届いた6桁コード"
+                maxLength={10}
+                placeholder="メールに届いた確認コード"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                 autoFocus
