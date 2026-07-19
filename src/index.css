@@ -691,6 +691,17 @@ select {
   border-radius: 8px;
 }
 
+.sync-auth input:disabled {
+  background: var(--bg);
+  color: var(--text-sub);
+}
+
+.sync-sublinks {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .sync-message {
   margin-top: 10px;
   font-size: 13px;

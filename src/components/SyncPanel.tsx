@@ -9,7 +9,8 @@ import { useCourseStore } from '../stores/courseStore';
 /**
  * クラウド共有（共有グリーンブック）。
  * - .env 未設定 → 案内のみ表示
- * - 設定済み → メールのログインリンク（マジックリンク）でログイン
+ * - 設定済み → メールに届く「6桁の確認コード」を入力してログイン（OTP）。
+ *   リンクを開かないので、PWA（ホーム画面アプリ）から出ずにログインできる。
  *   ログイン済みユーザーは全員で同じコース一覧を共有・編集できる（RLS: authenticated）。
  *   ログイン時に自動で「みんなの変更」を取得し、共有ボタンで自分の変更を反映する。
  */
@@ -18,7 +19,7 @@ export default function SyncPanel() {
   const [session, setSession] = useState<Session | null>(null);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [linkSent, setLinkSent] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   /** 招待状態（null = 判定中） */
@@ -86,30 +87,24 @@ export default function SyncPanel() {
     }
   };
 
-  const sendLink = () =>
+  const sendCode = () =>
     run(async () => {
-      const { error } = await supabase!.auth.signInWithOtp({
-        email,
-        options: {
-          // ログインリンクを「今開いているアプリのURL」に戻す
-          emailRedirectTo: window.location.origin,
-        },
-      });
+      const { error } = await supabase!.auth.signInWithOtp({ email: email.trim() });
       if (error) throw new Error(error.message);
-      setLinkSent(true);
-      return 'ログインリンクをメールに送信しました';
+      setCodeSent(true);
+      return '確認コードをメールに送信しました';
     });
 
   const verifyOtp = () =>
     run(async () => {
       const { error } = await supabase!.auth.verifyOtp({
-        email,
-        token: otp,
+        email: email.trim(),
+        token: otp.trim(),
         type: 'email',
       });
       if (error) throw new Error(error.message);
       setOtp('');
-      setLinkSent(false);
+      setCodeSent(false);
       return 'ログインしました';
     });
 
@@ -135,40 +130,62 @@ export default function SyncPanel() {
     });
 
   return (
-    <details className="sync-panel" open={linkSent || undefined}>
+    <details className="sync-panel" open={codeSent || undefined}>
       <summary>☁️ クラウド同期 {session ? `（${session.user.email}）` : ''}</summary>
       {!session ? (
         <div className="sync-auth">
+          <p className="sync-note">
+            招待されたメールアドレスでログインします。届く
+            <strong>6桁の確認コード</strong>をこのアプリに入力してください
+            （メールのリンクを開く必要はありません）。
+          </p>
           <input
             type="email"
             placeholder="メールアドレス"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            disabled={codeSent || busy}
           />
-          <button className="btn" onClick={sendLink} disabled={busy || !email}>
-            {linkSent ? 'ログインリンクを再送信' : 'ログインリンクを送信'}
-          </button>
-          {linkSent && (
+          {!codeSent ? (
+            <button className="btn primary" onClick={sendCode} disabled={busy || !email}>
+              確認コードを送信
+            </button>
+          ) : (
             <>
-              <p className="sync-note">
-                メールに届いたリンクを<strong>この端末のブラウザで</strong>
-                開くとログインが完了します。
-                メールに6桁コードが記載されている場合は、下に入力しても
-                ログインできます。
-              </p>
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="確認コード（メールに記載がある場合）"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder="メールに届いた6桁コード"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                autoFocus
               />
-              {otp && (
-                <button className="btn primary" onClick={verifyOtp} disabled={busy}>
-                  コードでログイン
+              <button
+                className="btn primary"
+                onClick={verifyOtp}
+                disabled={busy || otp.length < 6}
+              >
+                ログイン
+              </button>
+              <div className="sync-sublinks">
+                <button className="link-btn" onClick={sendCode} disabled={busy}>
+                  コードを再送信
                 </button>
-              )}
+                <button
+                  className="link-btn"
+                  onClick={() => {
+                    setCodeSent(false);
+                    setOtp('');
+                    setMessage('');
+                  }}
+                  disabled={busy}
+                >
+                  メールアドレスを変更
+                </button>
+              </div>
             </>
           )}
         </div>
