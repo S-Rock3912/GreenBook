@@ -1,0 +1,833 @@
+:root {
+  --green-dark: #1a5c3a;
+  --green: #2a7d4f;
+  --green-light: #e8f3ec;
+  --bg: #f6f7f5;
+  --card: #ffffff;
+  --text: #1d2a22;
+  --text-sub: #6b7a70;
+  --border: #dde4df;
+  --danger: #d03535;
+  --radius: 12px;
+  --shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP',
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 16px; /* iOS ズーム防止 */
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: var(--text-sub);
+}
+
+/* クラウド自動復元などの一時通知 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: calc(100% - 32px);
+  background: var(--green-dark);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  animation: toast-in 0.25s ease;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ---------- レイアウト ---------- */
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: var(--green-dark);
+  color: #fff;
+  padding: calc(env(safe-area-inset-top) + 14px) 16px 14px;
+}
+
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.app-header .subtitle {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.app-header.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.back-btn {
+  color: #fff;
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.back-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.page-body {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-sub);
+  padding: 40px 0 8px;
+  line-height: 1.8;
+}
+
+/* ---------- ボタン・チップ ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.btn.primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.btn.small {
+  padding: 7px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.link-btn {
+  color: var(--green);
+  font-size: 13px;
+  padding: 6px 8px;
+  font-weight: 600;
+}
+
+.link-btn.danger {
+  color: var(--danger);
+}
+
+.chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.chip.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* ---------- コース一覧 ---------- */
+
+.course-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.course-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  text-align: left;
+}
+
+.course-card:active {
+  background: var(--green-light);
+}
+
+.course-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.course-name {
+  font-size: 16px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-info {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.course-updated {
+  font-size: 11px;
+  color: var(--text-sub);
+  flex-shrink: 0;
+}
+
+.course-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 2px 4px 0;
+}
+
+.add-course {
+  padding: 14px;
+  font-size: 15px;
+}
+
+.course-form {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.course-form input {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.hole-count-select {
+  display: flex;
+  gap: 8px;
+}
+
+.course-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- ホール一覧 ---------- */
+
+.hole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.hole-cell {
+  aspect-ratio: 1.15;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.hole-cell:active {
+  background: var(--green-light);
+}
+
+.hole-cell.has-data {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.hole-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green-dark);
+}
+
+.hole-indicators {
+  font-size: 11px;
+  min-height: 15px;
+  display: flex;
+  gap: 4px;
+  color: var(--text-sub);
+}
+
+/* ---------- ホール編集 ---------- */
+
+.hole-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.hole-nav-btn {
+  color: #fff;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.hole-nav-btn:disabled {
+  opacity: 0.3;
+}
+
+.hole-nav-btn:not(:disabled):active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tabs {
+  display: flex;
+  background: var(--green-dark);
+  padding: 0 16px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: #fff;
+  border-bottom-color: #ffd54a;
+}
+
+.editor-body {
+  gap: 10px;
+}
+
+.canvas-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.canvas-actions .spacer {
+  flex: 1;
+}
+
+.canvas-container {
+  width: 100%;
+}
+
+.green-canvas {
+  display: block;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+/* ---------- ツールバー ---------- */
+
+.toolbar {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar-row.tools {
+  justify-content: space-between;
+}
+
+.tool-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 2px;
+  border-radius: 8px;
+  color: var(--text-sub);
+}
+
+.tool-btn.active {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.tool-label {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.toolbar-row.options {
+  justify-content: space-between;
+}
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+
+.swatch.active {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px #fff inset;
+}
+
+.width-options {
+  display: flex;
+  gap: 4px;
+}
+
+.width-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.width-btn.active {
+  background: var(--green-light);
+}
+
+.width-dot {
+  background: var(--text);
+  border-radius: 50%;
+}
+
+/* ---------- メモ ---------- */
+
+.memo-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.memo-form {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category-chips,
+.quick-templates {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip.template {
+  font-weight: 400;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.memo-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.memo-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  width: 100%;
+}
+
+.memo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memo-empty {
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 13px;
+  padding: 16px 0;
+}
+
+.memo-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+}
+
+.memo-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+  color: #fff;
+  background: var(--text-sub);
+}
+
+.category-putt.memo-badge,
+.memo-badge.category-putt {
+  background: var(--green);
+}
+
+.memo-badge.category-slope {
+  background: #d07a1f;
+}
+
+.memo-badge.category-speed {
+  background: #2762c9;
+}
+
+.chip.category-putt.active {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.chip.category-slope.active {
+  background: #d07a1f;
+  border-color: #d07a1f;
+}
+
+.chip.category-speed.active {
+  background: #2762c9;
+  border-color: #2762c9;
+}
+
+.memo-text {
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.memo-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-sub);
+}
+
+.memo-meta time {
+  margin-right: auto;
+}
+
+.memo-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memo-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- 同期パネル ---------- */
+
+.sync-panel {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  margin-top: 8px;
+}
+
+.sync-panel summary {
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-sub);
+}
+
+.sync-note {
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.7;
+  margin-top: 10px;
+}
+
+.sync-auth,
+.sync-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.sync-auth input {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.sync-message {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--green-dark);
+}
+
+/* ---------- ストレージ保護バッジ ---------- */
+
+.storage-badge {
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storage-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.storage-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.storage-dot.on {
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(42, 125, 79, 0.18);
+}
+
+.storage-dot.off {
+  background: #d9a520;
+  box-shadow: 0 0 0 3px rgba(217, 165, 32, 0.18);
+}
+
+.storage-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.storage-usage {
+  font-size: 12px;
+  color: var(--text-sub);
+  padding-left: 17px;
+}
+
+.storage-badge .btn.small {
+  align-self: flex-start;
+}
+
+/* ---------- 招待管理 ---------- */
+
+.invite-manager {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.invite-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.invite-form input {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+}
+
+.invite-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.role-select {
+  display: flex;
+  gap: 6px;
+}
+
+.invite-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.invite-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 8px;
+}
+
+.invite-email {
+  flex: 1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.invite-role {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--text-sub);
+}
+
+.invite-role.role-admin {
+  background: var(--green-dark);
+}
+
+.invite-you {
+  font-size: 11px;
+  color: var(--text-sub);
+  padding: 6px 8px;
+}

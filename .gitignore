@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+.env.local
+*.local
+.DS_Store
+
+# ビルド生成物
+*.tsbuildinfo
+
+# Claude Code のローカル設定
+.claude/
+
+# 手元のグリーン写真（個人データ。アプリからアップロードして使うのでリポジトリには含めない）
+Green/
